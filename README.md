@@ -9,9 +9,12 @@ HTTP Cache Warmer
 Clone the repo and then run the following PHP CLI command. 
 
 ```
-php warmer.php http://www.romano.mercedesdealer.com
+php warmer.php http://www.your-website-running-google-sitemap-xml.com
 
 ```
-
-The script will add /sitemap.xml to the end of the URL. 
+The script will add /sitemap.xml to the end of the URL, then perform GET requests on each of the return sitemap URLs.
  
+### @TODO : 
+ 
+  - Add batch functionality from file.
+  - Better memory + file processing for large maps.
