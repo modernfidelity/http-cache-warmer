@@ -15,33 +15,8 @@ $ver = "HTTP Cache Warmer 0.1";
 
 echo $ver . "\n\r";
 
-
-$siteUrl = $argv[1];
-
-
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $siteUrl . '/sitemap.xml');
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-$data = curl_exec($ch);
-curl_close($ch);
-
-
-$xml = new SimpleXMLElement($data);
-
-
-foreach ($xml->url as $url_list) {
-  $url = $url_list->loc;
-  echo $url;
-}
-
-
-
-
-
-
-
-
-
+// Load Map
+loadSiteMapXML($argv[1]);
 
 
 /**
@@ -67,14 +42,48 @@ function getURL($url) {
  * @param $url
  */
 function loadSiteMapXML($url) {
+
+
   $ch = curl_init();
-  curl_setopt($ch, CURLOPT_URL, $url);
+  curl_setopt($ch, CURLOPT_URL, $url . '/sitemap.xml');
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
   $data = curl_exec($ch);
   curl_close($ch);
 
+
+  // Break out
+  parseXml($data);
+
 }
 
+
+/**
+ *
+ * Parse returned XML from Map
+ *
+ */
+function parseXml($data) {
+
+  // Break out
+  $xml = new SimpleXMLElement($data);
+
+  var_dump($xml);
+
+
+  $count = 1;
+
+  foreach ($xml->url as $url_list) {
+    $url = $url_list->loc;
+
+    echo $url . "\n\r";
+
+
+    $count++;
+  }
+
+  echo "\n\r Total : " . $count . "\n\r";
+
+}
 
 /**
  *
@@ -82,7 +91,7 @@ function loadSiteMapXML($url) {
  *
  * @param $data
  */
-function writeFile ($data, $fileName) {
+function writeFile($data, $fileName) {
 
   if (@simplexml_load_string($xml)) {
     $fp = fopen($fileName, 'w');
