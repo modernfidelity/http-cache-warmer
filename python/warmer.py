@@ -8,7 +8,9 @@ import pycurl
 from multiprocessing import Pool
 from StringIO import StringIO
 import argparse
+from datetime import datetime
 
+startTime = datetime.now()
 
 def curlUrl(requestUrl):
 
@@ -83,7 +85,7 @@ if __name__ == '__main__':
 
     # Setup Multiprocessing
 
-    p = Pool(32)
+    p = Pool(64)
 
 
     # Check for Batch file
@@ -127,4 +129,4 @@ if __name__ == '__main__':
         count = len(currentUrlList)
         print "URL COUNT : ", count
 
-
+        print datetime.now() - startTime
