@@ -30,7 +30,18 @@ function getURL($url) {
   curl_setopt($ch, CURLOPT_URL, $url);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
   $data = curl_exec($ch);
+
+
+  //Get the resulting HTTP status code from the cURL handle.
+  $http_status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
   curl_close($ch);
+
+
+  echo $http_status_code . " - " . $url .  "\n\r";
+
+
+
 
 }
 
@@ -67,18 +78,25 @@ function parseXml($data) {
   // Break out
   $xml = new SimpleXMLElement($data);
 
-  var_dump($xml);
+//  var_dump($xml);
 
-
+  // Add counter
   $count = 1;
 
+  // Loop through each returned URL and fire GET request.
   foreach ($xml->url as $url_list) {
+
     $url = $url_list->loc;
 
-    echo $url . "\n\r";
+    // Output
+//    echo $url . "\n\r";
 
+    // Make a REQUEST
+    getURL($url);
 
+    // Increment count
     $count++;
+
   }
 
   echo "\n\r Total : " . $count . "\n\r";

@@ -1,17 +1,28 @@
 HTTP Cache Warmer
 =================
 
- Simple PHP script to loop over a selection of site URLs that are running Google Sitemap XML, parse the returns and then call cURL GET requests to the endpoints, in turn 'warming' (generating) caches.
+ Simple scripts to loop over a selection of site URLs that are running Google Sitemap XML, parse the returns and then call cURL GET requests to the endpoints, in turn 'warming' (generating) caches.
 
 ## Install 
 
-Clone the repo and then run the following PHP CLI command. 
+Clone the repo and then run the following CLI commands.
+
+
+### PHP
 
 ```
 php warmer.php http://www.your-website-running-google-sitemap-xml.com
 
 ```
-The script will add /sitemap.xml to the end of the URL, then perform GET requests on each of the return sitemap URLs.
+
+### PYTHON
+
+```
+python warmer.py http://www.your-website-running-google-sitemap-xml.com
+
+```
+
+The scripts will add /sitemap.xml to the end of the URL, then perform GET requests on each of the return sitemap URLs.
  
 ### @TODO : 
  
