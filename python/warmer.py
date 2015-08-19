@@ -28,18 +28,12 @@ def curlUrl(requestUrl):
     c = pycurl.Curl()
     c.setopt(c.URL, requestUrl)
     c.setopt(c.WRITEDATA, buffer)
-
     c.perform()
-
     status = c.getinfo(pycurl.HTTP_CODE)
     effectiveURL = c.getinfo(pycurl.EFFECTIVE_URL)
-
     c.close()
 
     print status, effectiveURL
-
-    # return c.getinfo(pycurl.HTTP_CODE), c.getinfo(pycurl.EFFECTIVE_URL)
-    # return buffer.getvalue()
 
 
 def loadBatchFile(file):
@@ -71,30 +65,20 @@ def getSiteMap(requestUrl):
 
     try:
 
-        # @todo check for protocol and add on each line
-
-
+        # Check string
         if requestUrl.startswith('http://'):
-
             URL = requestUrl + "/sitemap.xml"
-
         elif requestUrl.startswith('https://'):
-
             URL = requestUrl + "/sitemap.xml"
-
         else:
-
             URL = "http://" + requestUrl + "/sitemap.xml"
-
-
 
 
         print URL
 
+        # XML ElementTree
         tree = ET.parse(urlopen(URL))
-
         root = tree.getroot()
-
         ns = {'sitemap': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
 
         # Loop throught namespaced sitemap XML
@@ -103,7 +87,6 @@ def getSiteMap(requestUrl):
 
             # Build fresh list
             currentUrlList.append(loc.text)
-
 
     except:
 
@@ -114,31 +97,22 @@ def getSiteMap(requestUrl):
 
 
 
-
-
 #
 # Main functionality
 #
 if __name__ == '__main__':
 
     # Add CLI helpers
-    parser = argparse.ArgumentParser(
-        description='HTTP CACHE WARMER :: Lets warm things up a bit...'
-    )
-
+    parser = argparse.ArgumentParser(description='HTTP CACHE WARMER :: Lets warm things up a bit...')
     parser.add_argument('--url', help='The URL to test')
-
     parser.add_argument('--file', help='The batch file of URLs to process')
-
     args = parser.parse_args()
 
-
     # Setup Multiprocessing
-
     p = Pool(64)
 
 
-    # Check for Batch file
+    # FILE - Check for Batch file
     if args.file:
 
         currentUrlList = []
@@ -160,12 +134,7 @@ if __name__ == '__main__':
 
             time.sleep(2)
 
-
-
-
-    # ----------------------------------------------
-
-    # Default to provided URL (full)
+    # URL STRING - Default to provided URL (full)
     else:
 
         print "Requesting URL : " + args.url
@@ -173,11 +142,8 @@ if __name__ == '__main__':
         URL = args.url + "/sitemap.xml"
 
         tree = ET.parse(urlopen(URL))
-
         root = tree.getroot()
-
         currentUrlList = []
-
         ns = {'sitemap': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
 
         # Loop throught namespaced sitemap XML
@@ -186,9 +152,6 @@ if __name__ == '__main__':
 
             # Build fresh list
             currentUrlList.append(loc.text)
-            # GET Request each URL
-            # curlUrl(loc.text)
-
 
         # Map List
         p.map(curlUrl, currentUrlList)
