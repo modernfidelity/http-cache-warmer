@@ -9,11 +9,12 @@ from multiprocessing import Pool
 from StringIO import StringIO
 import argparse
 from datetime import datetime
+import time
 
 startTime = datetime.now()
 
-def curlUrl(requestUrl):
 
+def curlUrl(requestUrl):
     """
 
     Main GET request via cURL
@@ -41,26 +42,64 @@ def curlUrl(requestUrl):
     # return buffer.getvalue()
 
 
-
-
 def loadBatchFile(file):
-
     """
-    Load a batch of URLs from a file
+
+    Load Batch file as String
 
     :param file:
     :return:
+
     """
-    return open(file)
+
+    f = open(file)
+    lines = [i.rstrip() for i in f.readlines()]
+
+    return lines
 
 
-def getSiteXml(requestUrl):
-    return
+def getSiteMap(requestUrl):
+    """
 
-def getUrl(url):
-    return
+    Load sitemap.xml
 
-def parseXml(url):
+    :param requestUrl:
+    :return:
+    """
+
+    currentUrlList = []
+
+    try:
+
+        # @todo check for protocol and add on each line
+
+        URL = "http://" + requestUrl + "/sitemap.xml"
+
+        print URL
+
+        tree = ET.parse(urlopen(URL))
+
+        root = tree.getroot()
+
+        ns = {'sitemap': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+
+        # Loop throught namespaced sitemap XML
+        for url in root.findall('sitemap:url', ns):
+            loc = url.find('sitemap:loc', ns)
+
+            # Build fresh list
+            currentUrlList.append(loc.text)
+
+
+    except:
+
+        # log error
+        print "error: " + URL
+
+    return currentUrlList
+
+
+def processSiteMap(data):
     return
 
 
@@ -68,8 +107,6 @@ def parseXml(url):
 # Main functionality
 #
 if __name__ == '__main__':
-
-
 
     # Add CLI helpers
     parser = argparse.ArgumentParser(
@@ -91,10 +128,29 @@ if __name__ == '__main__':
     # Check for Batch file
     if args.file:
 
+        currentUrlList = []
 
-        print "@todo - file = " + args.file
+        print "file = " + args.file
+
+        # Load and parse each line of the file as URLs
+        data = loadBatchFile(args.file)
+
+        for url in data:
+            currentUrlList = getSiteMap(url)
+
+            # Map List
+            # p.map(curlUrl, currentUrlList)
+
+            # Count URLs from sitemap
+            count = len(currentUrlList)
+            print "URL COUNT : ", count
+
+            time.sleep(5)
 
 
+
+
+    # ----------------------------------------------
 
     # Default to provided URL (full)
     else:
@@ -113,7 +169,6 @@ if __name__ == '__main__':
 
         # Loop throught namespaced sitemap XML
         for url in root.findall('sitemap:url', ns):
-
             loc = url.find('sitemap:loc', ns)
 
             # Build fresh list
