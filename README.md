@@ -3,7 +3,7 @@ HTTP Cache Warmer
 
 Simple scripts to loop over a selection of site URLs that are running Google Sitemap XML, parse the returns and then call cURL GET requests to the endpoints, in turn 'warming' (generating) caches.
 
-Useful for systems running Edge side caches like or Akamai, AWS Cloudfront or Varnish.
+Useful for systems running Edge side caches like or Akamai, AWS Cloudfront or Varnish/Nginx.
 
 ## Install 
 
@@ -18,6 +18,8 @@ php warmer.php http://www.your-website-running-google-sitemap-xml.com
 ```
 
 ### Python (2.7.x)
+
+
 
 Run against a single URL/website :
 
@@ -38,4 +40,4 @@ The scripts will add /sitemap.xml to the end of the URL, then perform GET reques
 ### @TODO : 
  
   - Add batch functionality from file.
-  - Better memory + file processing for large maps.
+
