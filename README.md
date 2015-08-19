@@ -1,7 +1,9 @@
 HTTP Cache Warmer
 =================
 
- Simple scripts to loop over a selection of site URLs that are running Google Sitemap XML, parse the returns and then call cURL GET requests to the endpoints, in turn 'warming' (generating) caches.
+Simple scripts to loop over a selection of site URLs that are running Google Sitemap XML, parse the returns and then call cURL GET requests to the endpoints, in turn 'warming' (generating) caches.
+
+Useful for systems running Edge side caches like or Akamai, AWS Cloudfront or Varnish.
 
 ## Install 
 
