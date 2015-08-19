@@ -1,8 +1,5 @@
-#!/usr/bin/python
-
-import sys
-import requests
-import xml.etree.ElementTree as ET
+import logging
+import xml.etree.ElementTree as Et
 from urllib2 import urlopen
 import pycurl
 from multiprocessing import Pool
@@ -14,29 +11,29 @@ import time
 startTime = datetime.now()
 
 
-def curlUrl(requestUrl):
+def curlurl(requesturl):
     """
 
     Main GET request via cURL
 
-    :param requestUrl:
+    :param requesturl:
     :return:
     """
 
     buffer = StringIO()
 
     c = pycurl.Curl()
-    c.setopt(c.URL, requestUrl)
+    c.setopt(c.URL, requesturl)
     c.setopt(c.WRITEDATA, buffer)
     c.perform()
     status = c.getinfo(pycurl.HTTP_CODE)
-    effectiveURL = c.getinfo(pycurl.EFFECTIVE_URL)
+    effectiveurl = c.getinfo(pycurl.EFFECTIVE_URL)
     c.close()
 
-    print status, effectiveURL
+    print status, effectiveurl
 
 
-def loadBatchFile(file):
+def loadbatchfile(file):
     """
 
     Load Batch file as String
@@ -52,54 +49,50 @@ def loadBatchFile(file):
     return lines
 
 
-def getSiteMap(requestUrl):
+def getsitemap(requesturl):
     """
 
     Load sitemap.xml
 
-    :param requestUrl:
+    :param requesturl:
     :return:
     """
 
-    currentUrlList = []
+    currenturllist = []
 
     try:
 
         # Check string
-        if requestUrl.startswith('http://'):
-            URL = requestUrl + "/sitemap.xml"
-        elif requestUrl.startswith('https://'):
-            URL = requestUrl + "/sitemap.xml"
+        if requesturl.startswith('http://'):
+            url = requesturl + "/sitemap.xml"
+        elif requesturl.startswith('https://'):
+            url = requesturl + "/sitemap.xml"
         else:
-            URL = "http://" + requestUrl + "/sitemap.xml"
+            url = "http://" + requesturl + "/sitemap.xml"
 
-
-        print URL
+        print url
 
         # XML ElementTree
-        tree = ET.parse(urlopen(URL))
+        tree = Et.parse(urlopen(url))
         root = tree.getroot()
         ns = {'sitemap': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
 
-        # Loop throught namespaced sitemap XML
+        # Loop through namespaced sitemap XML
         for url in root.findall('sitemap:url', ns):
             loc = url.find('sitemap:loc', ns)
 
             # Build fresh list
-            currentUrlList.append(loc.text)
+            currenturllist.append(loc.text)
 
     except:
 
         # log error
-        print "error: " + URL
+        print "error: " + url
 
-    return currentUrlList
+    return currenturllist
 
 
-
-#
 # Main functionality
-#
 if __name__ == '__main__':
 
     # Add CLI helpers
@@ -111,25 +104,24 @@ if __name__ == '__main__':
     # Setup Multiprocessing
     p = Pool(64)
 
-
     # FILE - Check for Batch file
     if args.file:
 
-        currentUrlList = []
+        currenturllist = []
 
         print "file = " + args.file
 
         # Load and parse each line of the file as URLs
-        data = loadBatchFile(args.file)
+        data = loadbatchfile(args.file)
 
         for url in data:
-            currentUrlList = getSiteMap(url)
+            currenturllist = getsitemap(url)
 
             # Map List
-            p.map(curlUrl, currentUrlList)
+            p.map(curlurl, currenturllist)
 
             # Count URLs from sitemap
-            count = len(currentUrlList)
+            count = len(currenturllist)
             print "URL COUNT : ", count
 
             time.sleep(2)
@@ -141,23 +133,23 @@ if __name__ == '__main__':
 
         URL = args.url + "/sitemap.xml"
 
-        tree = ET.parse(urlopen(URL))
+        tree = Et.parse(urlopen(URL))
         root = tree.getroot()
-        currentUrlList = []
+        currenturllist = []
         ns = {'sitemap': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
 
-        # Loop throught namespaced sitemap XML
+        # Loop through namespaced sitemap XML
         for url in root.findall('sitemap:url', ns):
             loc = url.find('sitemap:loc', ns)
 
             # Build fresh list
-            currentUrlList.append(loc.text)
+            currenturllist.append(loc.text)
 
         # Map List
-        p.map(curlUrl, currentUrlList)
+        p.map(curlurl, currenturllist)
 
         # Count URLs from sitemap
-        count = len(currentUrlList)
+        count = len(currenturllist)
         print "URL COUNT : ", count
 
         print datetime.now() - startTime
