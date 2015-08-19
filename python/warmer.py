@@ -10,10 +10,16 @@ from StringIO import StringIO
 import argparse
 
 
-#
-# Main GET request via cURL
-#
 def curlUrl(requestUrl):
+
+    """
+
+    Main GET request via cURL
+
+    :param requestUrl:
+    :return:
+    """
+
     buffer = StringIO()
 
     c = pycurl.Curl()
@@ -33,28 +39,25 @@ def curlUrl(requestUrl):
     # return buffer.getvalue()
 
 
-#
-# Load a batch of URLs from a file
-#
+
 
 def loadBatchFile(file):
+
+    """
+    Load a batch of URLs from a file
+
+    :param file:
+    :return:
+    """
     return open(file)
 
 
-#
-#
 def getSiteXml(requestUrl):
     return
 
-
-#
-#
 def getUrl(url):
     return
 
-
-#
-#
 def parseXml(url):
     return
 
@@ -63,6 +66,8 @@ def parseXml(url):
 # Main functionality
 #
 if __name__ == '__main__':
+
+
 
     # Add CLI helpers
     parser = argparse.ArgumentParser(
@@ -74,6 +79,12 @@ if __name__ == '__main__':
     parser.add_argument('--file', help='The batch file of URLs to process')
 
     args = parser.parse_args()
+
+
+    # Setup Multiprocessing
+
+    p = Pool(32)
+
 
     # Check for Batch file
     if args.file:
@@ -94,20 +105,21 @@ if __name__ == '__main__':
 
         root = tree.getroot()
 
+        currentUrlList = []
+
         ns = {'sitemap': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
 
-        #
+        # Loop throught namespaced sitemap XML
         for url in root.findall('sitemap:url', ns):
+
             loc = url.find('sitemap:loc', ns)
 
-            curlUrl(loc.text)
+            # Build fresh list
+            currentUrlList.append(loc.text)
+            # GET Request each URL
+            # curlUrl(loc.text)
 
 
-            # -------------------------
+        # Map List
+        p.map(curlUrl, currentUrlList)
 
-            # website = sys.argv[1]
-            #
-            # URL = website + "/sitemap.xml"
-            #
-            # print URL
-            #
