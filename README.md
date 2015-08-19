@@ -36,8 +36,6 @@ python warmer.py --file batchurls.txt
 ```
 
 The scripts will add /sitemap.xml to the end of the URL, then perform GET requests on each of the return sitemap URLs.
- 
-### @TODO : 
- 
-  - Add batch functionality from file.
+
+
 
