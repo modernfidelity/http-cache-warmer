@@ -123,3 +123,8 @@ if __name__ == '__main__':
         # Map List
         p.map(curlUrl, currentUrlList)
 
+        # Count URLs from sitemap
+        count = len(currentUrlList)
+        print "URL COUNT : ", count
+
+
