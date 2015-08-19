@@ -73,7 +73,21 @@ def getSiteMap(requestUrl):
 
         # @todo check for protocol and add on each line
 
-        URL = "http://" + requestUrl + "/sitemap.xml"
+
+        if requestUrl.startswith('http://'):
+
+            URL = requestUrl + "/sitemap.xml"
+
+        elif requestUrl.startswith('https://'):
+
+            URL = requestUrl + "/sitemap.xml"
+
+        else:
+
+            URL = "http://" + requestUrl + "/sitemap.xml"
+
+
+
 
         print URL
 
@@ -99,8 +113,7 @@ def getSiteMap(requestUrl):
     return currentUrlList
 
 
-def processSiteMap(data):
-    return
+
 
 
 #
@@ -139,13 +152,13 @@ if __name__ == '__main__':
             currentUrlList = getSiteMap(url)
 
             # Map List
-            # p.map(curlUrl, currentUrlList)
+            p.map(curlUrl, currentUrlList)
 
             # Count URLs from sitemap
             count = len(currentUrlList)
             print "URL COUNT : ", count
 
-            time.sleep(5)
+            time.sleep(2)
 
 
 
