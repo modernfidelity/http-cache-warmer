@@ -8,17 +8,26 @@ HTTP Cache Warmer
 Clone the repo and then run the following CLI commands.
 
 
-### PHP
+### PHP (5.5+)
 
 ```
 php warmer.php http://www.your-website-running-google-sitemap-xml.com
 
 ```
 
-### PYTHON
+### Python (2.7.x)
+
+Run against a single URL/website :
 
 ```
-python warmer.py http://www.your-website-running-google-sitemap-xml.com
+python warmer.py --url http://www.your-website-running-google-sitemap-xml.com
+
+```
+
+Run a batch file containg a list of URLs/websites :
+
+```
+python warmer.py --file batchurls.txt
 
 ```
 
