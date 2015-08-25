@@ -59,8 +59,9 @@ def getsitemap(requesturl):
     :param requesturl:
     :return:
     """
-    
+
     try:
+        global url, tree, root, ns, loc
         # Check string
         if requesturl.startswith('http://'):
             url = requesturl + "/sitemap.xml"
