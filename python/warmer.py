@@ -137,7 +137,7 @@ if __name__ == '__main__':
             count = len(currenturllist)
             print "URL COUNT : ", count
 
-            time.sleep(2)
+            #time.sleep(0.5)
 
     # URL STRING - Default to provided URL (full)
     else:
