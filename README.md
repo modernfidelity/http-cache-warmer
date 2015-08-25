@@ -28,7 +28,7 @@ python warmer.py --url http://www.your-website-running-google-sitemap-xml.com
 
 ```
 
-Run a batch file containg a list of URLs/websites :
+Run a batch file containing a list of URLs/websites :
 
 ```
 python warmer.py --file batchurls.txt
@@ -37,5 +37,7 @@ python warmer.py --file batchurls.txt
 
 The scripts will add /sitemap.xml to the end of the URL, then perform GET requests on each of the return sitemap URLs.
 
+### @TODO :
 
+  - Add logging
 
