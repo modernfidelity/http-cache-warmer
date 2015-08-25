@@ -6,7 +6,6 @@ from multiprocessing import Pool
 from StringIO import StringIO
 import argparse
 from datetime import datetime
-import time
 
 startTime = datetime.now()
 
@@ -14,30 +13,27 @@ startTime = datetime.now()
 def curlurl(requesturl):
     """
     Main GET request via cURL
-
     :param requesturl:
     :return:
     """
 
-    buffer = StringIO()
-
+    writebuffer = StringIO()
     c = pycurl.Curl()
     c.setopt(c.URL, requesturl)
-    c.setopt(c.WRITEDATA, buffer)
+    c.setopt(c.WRITEDATA, writebuffer)
     c.setopt(c.FOLLOWLOCATION, True)
     c.setopt(c.CONNECTTIMEOUT, 5)
     c.setopt(c.TIMEOUT, 10)
-    #c.setopt(c.VERBOSE, True)
+    # c.setopt(c.VERBOSE, True)
     c.setopt(c.FAILONERROR, False)
 
     try:
         c.perform()
         status = c.getinfo(pycurl.HTTP_CODE)
         effectiveurl = c.getinfo(pycurl.EFFECTIVE_URL)
-
         c.close()
 
-        if(status):
+        if status:
             print status, effectiveurl
 
     except pycurl.error, error:
@@ -45,33 +41,26 @@ def curlurl(requesturl):
         print 'An error occurred: ', errstr
 
 
-def loadbatchfile(file):
+def loadbatchfile(batchfile):
     """
     Load Batch file as String
-
-    :param file:
+    :param batchfile:
     :return:
-
     """
 
-    f = open(file)
+    f = open(batchfile)
     lines = [i.rstrip() for i in f.readlines()]
-
     return lines
 
 
 def getsitemap(requesturl):
     """
     Load sitemap.xml
-
     :param requesturl:
     :return:
     """
-
-    currenturllist = []
-
+    
     try:
-
         # Check string
         if requesturl.startswith('http://'):
             url = requesturl + "/sitemap.xml"
@@ -87,24 +76,21 @@ def getsitemap(requesturl):
         root = tree.getroot()
         ns = {'sitemap': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
 
-        # Loop through namespaced sitemap XML
+        # Loop through namespace sitemap XML
         for url in root.findall('sitemap:url', ns):
             loc = url.find('sitemap:loc', ns)
-
             # Build fresh list
             currenturllist.append(loc.text)
 
-    except:
+        return currenturllist
+
+    except IOError as e:
 
         # log error
-        print "error: " + url
-
-    return currenturllist
-
+        print "error: " + format(e.errno, e.strerror)
 
 # Main functionality
 if __name__ == '__main__':
-
 
     logging.info("log message")
 
@@ -121,48 +107,38 @@ if __name__ == '__main__':
     if args.file:
 
         currenturllist = []
-
         print "file = " + args.file
-
         # Load and parse each line of the file as URLs
         data = loadbatchfile(args.file)
 
         for url in data:
             currenturllist = getsitemap(url)
-
             # Map List
             p.map(curlurl, currenturllist)
-
             # Count URLs from sitemap
             count = len(currenturllist)
             print "URL COUNT : ", count
-
-            #time.sleep(0.5)
+            # time.sleep(0.5)
 
     # URL STRING - Default to provided URL (full)
     else:
 
         print "Requesting URL : " + args.url
-
         URL = args.url + "/sitemap.xml"
-
         tree = Et.parse(urlopen(URL))
         root = tree.getroot()
         currenturllist = []
         ns = {'sitemap': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
 
-        # Loop through namespaced sitemap XML
+        # Loop through namespace sitemap XML
         for url in root.findall('sitemap:url', ns):
             loc = url.find('sitemap:loc', ns)
-
             # Build fresh list
             currenturllist.append(loc.text)
 
         # Map List
         p.map(curlurl, currenturllist)
-
         # Count URLs from sitemap
         count = len(currenturllist)
         print "URL COUNT : ", count
-
         print datetime.now() - startTime
