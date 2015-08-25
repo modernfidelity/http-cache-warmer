@@ -13,7 +13,6 @@ startTime = datetime.now()
 
 def curlurl(requesturl):
     """
-
     Main GET request via cURL
 
     :param requesturl:
@@ -25,17 +24,29 @@ def curlurl(requesturl):
     c = pycurl.Curl()
     c.setopt(c.URL, requesturl)
     c.setopt(c.WRITEDATA, buffer)
-    c.perform()
-    status = c.getinfo(pycurl.HTTP_CODE)
-    effectiveurl = c.getinfo(pycurl.EFFECTIVE_URL)
-    c.close()
+    c.setopt(c.FOLLOWLOCATION, True)
+    c.setopt(c.CONNECTTIMEOUT, 5)
+    c.setopt(c.TIMEOUT, 10)
+    #c.setopt(c.VERBOSE, True)
+    c.setopt(c.FAILONERROR, False)
 
-    print status, effectiveurl
+    try:
+        c.perform()
+        status = c.getinfo(pycurl.HTTP_CODE)
+        effectiveurl = c.getinfo(pycurl.EFFECTIVE_URL)
+
+        c.close()
+
+        if(status):
+            print status, effectiveurl
+
+    except pycurl.error, error:
+        errno, errstr = error
+        print 'An error occurred: ', errstr
 
 
 def loadbatchfile(file):
     """
-
     Load Batch file as String
 
     :param file:
@@ -51,7 +62,6 @@ def loadbatchfile(file):
 
 def getsitemap(requesturl):
     """
-
     Load sitemap.xml
 
     :param requesturl:
@@ -94,6 +104,9 @@ def getsitemap(requesturl):
 
 # Main functionality
 if __name__ == '__main__':
+
+
+    logging.info("log message")
 
     # Add CLI helpers
     parser = argparse.ArgumentParser(description='HTTP CACHE WARMER :: Lets warm things up a bit...')
